@@ -178,7 +178,7 @@ Zynq MPU. */
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
 
 #define configENABLE_MPU                                       1U
-//#define configENABLE_FPU                                       1U
+#define configENABLE_FPU                                       1U
 #define configUSE_MPU_WRAPPERS_V1                              0U
 #define configTOTAL_MPU_REGIONS 16
 #define configSYSTEM_CALL_STACK_SIZE 2048
