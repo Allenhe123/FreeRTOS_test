@@ -116,9 +116,7 @@ ulPortCountLeadingZeros:
 .global MPU_xTaskGetTickCount
 .type MPU_xTaskGetTickCount, function
 MPU_xTaskGetTickCount:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGetTickCount, MPU_xTaskGetTickCountImpl*/
-    ldr r12, = MPU_xTaskGetTickCountImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGetTickCount, MPU_xTaskGetTickCountImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -127,9 +125,7 @@ MPU_xTaskGetTickCount:
 .global MPU_uxTaskGetNumberOfTasks
 .type MPU_uxTaskGetNumberOfTasks, function
 MPU_uxTaskGetNumberOfTasks:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTaskGetNumberOfTasks, MPU_uxTaskGetNumberOfTasksImpl*/
-    ldr r12, = MPU_uxTaskGetNumberOfTasksImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTaskGetNumberOfTasks, MPU_uxTaskGetNumberOfTasksImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -138,9 +134,7 @@ MPU_uxTaskGetNumberOfTasks:
 .global MPU_vTaskSetTimeOutState
 .type MPU_vTaskSetTimeOutState, function
 MPU_vTaskSetTimeOutState:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskSetTimeOutState, MPU_vTaskSetTimeOutStateImpl*/
-    ldr r12, = MPU_vTaskSetTimeOutStateImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskSetTimeOutState, MPU_vTaskSetTimeOutStateImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -149,9 +143,7 @@ MPU_vTaskSetTimeOutState:
 .global MPU_xTaskCheckForTimeOut
 .type MPU_xTaskCheckForTimeOut, function
 MPU_xTaskCheckForTimeOut:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskCheckForTimeOut, MPU_xTaskCheckForTimeOutImpl*/
-    ldr r12, = MPU_xTaskCheckForTimeOutImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskCheckForTimeOut, MPU_xTaskCheckForTimeOutImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -160,9 +152,7 @@ MPU_xTaskCheckForTimeOut:
 .global MPU_xQueueGenericSend
 .type MPU_xQueueGenericSend, function
 MPU_xQueueGenericSend:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueGenericSend, MPU_xQueueGenericSendImpl*/
-    ldr r12, = MPU_xQueueGenericSendImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueGenericSend, MPU_xQueueGenericSendImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -171,9 +161,7 @@ MPU_xQueueGenericSend:
 .global MPU_uxQueueMessagesWaiting
 .type MPU_uxQueueMessagesWaiting, function
 MPU_uxQueueMessagesWaiting:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxQueueMessagesWaiting, MPU_uxQueueMessagesWaitingImpl*/
-    ldr r12, = MPU_uxQueueMessagesWaitingImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxQueueMessagesWaiting, MPU_uxQueueMessagesWaitingImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -182,9 +170,7 @@ MPU_uxQueueMessagesWaiting:
 .global MPU_uxQueueSpacesAvailable
 .type MPU_uxQueueSpacesAvailable, function
 MPU_uxQueueSpacesAvailable:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxQueueSpacesAvailable, MPU_uxQueueSpacesAvailableImpl*/
-    ldr r12, = MPU_uxQueueSpacesAvailableImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxQueueSpacesAvailable, MPU_uxQueueSpacesAvailableImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -193,9 +179,7 @@ MPU_uxQueueSpacesAvailable:
 .global MPU_xQueueReceive
 .type MPU_xQueueReceive, function
 MPU_xQueueReceive:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueReceive, MPU_xQueueReceiveImpl*/
-    ldr r12, = MPU_xQueueReceiveImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueReceive, MPU_xQueueReceiveImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -204,9 +188,7 @@ MPU_xQueueReceive:
 .global MPU_xQueuePeek
 .type MPU_xQueuePeek, function
 MPU_xQueuePeek:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueuePeek, MPU_xQueuePeekImpl*/
-    ldr r12, = MPU_xQueuePeekImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueuePeek, MPU_xQueuePeekImpl
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -215,9 +197,8 @@ MPU_xQueuePeek:
 .global MPU_xQueueSemaphoreTake
 .type MPU_xQueueSemaphoreTake, function
 MPU_xQueueSemaphoreTake:
-    /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueSemaphoreTake, MPU_xQueueSemaphoreTakeImpl*/
-    ldr r12, = MPU_xQueueSemaphoreTakeImpl
-    bx r12
+    INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueSemaphoreTake, MPU_xQueueSemaphoreTakeImpl
+
 /* ----------------------------------------------------------------------------------- */
 
 #if ( configUSE_EVENT_GROUPS == 1 )
@@ -227,9 +208,8 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xEventGroupWaitBitsEntry
     .type MPU_xEventGroupWaitBitsEntry, function
     MPU_xEventGroupWaitBitsEntry:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupWaitBits, MPU_xEventGroupWaitBitsImpl*/
-        ldr r12, = MPU_xEventGroupWaitBitsImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupWaitBits, MPU_xEventGroupWaitBitsImpl
+
     /* ----------------------------------------------------------------------------------- */
 
     .extern MPU_xEventGroupClearBitsImpl
@@ -237,9 +217,8 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xEventGroupClearBits
     .type MPU_xEventGroupClearBits, function
     MPU_xEventGroupClearBits:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupClearBits, MPU_xEventGroupClearBitsImpl*/
-        ldr r12, = MPU_xEventGroupClearBitsImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupClearBits, MPU_xEventGroupClearBitsImpl
+
     /* ----------------------------------------------------------------------------------- */
 
     .extern MPU_xEventGroupSetBitsImpl
@@ -247,9 +226,8 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xEventGroupSetBits
     .type MPU_xEventGroupSetBits, function
     MPU_xEventGroupSetBits:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupSetBits, MPU_xEventGroupSetBitsImpl*/
-        ldr r12, = MPU_xEventGroupSetBitsImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupSetBits, MPU_xEventGroupSetBitsImpl
+
     /* ----------------------------------------------------------------------------------- */
 
     .extern MPU_xEventGroupSyncImpl
@@ -257,9 +235,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xEventGroupSync
     .type MPU_xEventGroupSync, function
     MPU_xEventGroupSync:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupSync, MPU_xEventGroupSyncImpl*/
-        ldr r12, = MPU_xEventGroupSyncImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xEventGroupSync, MPU_xEventGroupSyncImpl
 
 #endif /* if ( configUSE_EVENT_GROUPS == 1 ) */
 
@@ -348,10 +324,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskDelayUntil
     .type MPU_xTaskDelayUntil, function
     MPU_xTaskDelayUntil:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskDelayUntil, MPU_xTaskDelayUntilImpl*/
-        ldr r12, = MPU_xTaskDelayUntilImpl
-        bx r12
-
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskDelayUntil, MPU_xTaskDelayUntilImpl
 
 #endif /* if ( ( INCLUDE_xTaskDelayUntil == 1 ) || ( INCLUDE_vTaskDelayUntil == 1 ) ) */
 
@@ -364,9 +337,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskAbortDelay
     .type MPU_xTaskAbortDelay, function
     MPU_xTaskAbortDelay:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskAbortDelay, MPU_xTaskAbortDelayImpl*/
-        ldr r12, = MPU_xTaskAbortDelayImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskAbortDelay, MPU_xTaskAbortDelayImpl
 
 #endif /* if ( INCLUDE_xTaskAbortDelay == 1 ) */
 
@@ -379,9 +350,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vTaskDelay
     .type MPU_vTaskDelay, function
     MPU_vTaskDelay:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskDelay, MPU_vTaskDelayImpl*/
-        ldr r12, = MPU_vTaskDelayImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskDelay, MPU_vTaskDelayImpl
 
 #endif /* if ( INCLUDE_vTaskDelay == 1 ) */
 
@@ -394,9 +363,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_uxTaskPriorityGet
     .type MPU_uxTaskPriorityGet, function
     MPU_uxTaskPriorityGet:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTaskPriorityGet, MPU_uxTaskPriorityGetImpl*/
-        ldr r12, = MPU_uxTaskPriorityGetImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTaskPriorityGet, MPU_uxTaskPriorityGetImpl
 
 #endif /* if ( INCLUDE_uxTaskPriorityGet == 1 ) */
 
@@ -409,9 +376,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_eTaskGetState
     .type MPU_eTaskGetState, function
     MPU_eTaskGetState:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_eTaskGetState, MPU_eTaskGetStateImpl*/
-        ldr r12, = MPU_eTaskGetStateImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_eTaskGetState, MPU_eTaskGetStateImpl
 
 #endif /* if ( INCLUDE_eTaskGetState == 1 ) */
 
@@ -485,9 +450,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vTaskSuspend
     .type MPU_vTaskSuspend, function
     MPU_vTaskSuspend:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskSuspend, MPU_vTaskSuspendImpl*/
-        ldr r12, = MPU_vTaskSuspendImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskSuspend, MPU_vTaskSuspendImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -496,9 +459,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vTaskResume
     .type MPU_vTaskResume, function
     MPU_vTaskResume:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskResume, MPU_vTaskResumeImpl*/
-        ldr r12, = MPU_vTaskResumeImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTaskResume, MPU_vTaskResumeImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -607,9 +568,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_uxTaskGetStackHighWaterMark
     .type MPU_uxTaskGetStackHighWaterMark, function
     MPU_uxTaskGetStackHighWaterMark:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTaskGetStackHighWaterMark, MPU_uxTaskGetStackHighWaterMarkImpl*/
-        ldr r12, = MPU_uxTaskGetStackHighWaterMarkImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTaskGetStackHighWaterMark, MPU_uxTaskGetStackHighWaterMarkImpl
 
 #endif /* if ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) */
 
@@ -635,9 +594,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskGetCurrentTaskHandle
     .type MPU_xTaskGetCurrentTaskHandle, function
     MPU_xTaskGetCurrentTaskHandle:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGetCurrentTaskHandle, MPU_xTaskGetCurrentTaskHandleImpl*/
-        ldr r12, = MPU_xTaskGetCurrentTaskHandleImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGetCurrentTaskHandle, MPU_xTaskGetCurrentTaskHandleImpl
 
 #endif /* if( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) ) */
 
@@ -650,9 +607,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskGetSchedulerState
     .type MPU_xTaskGetSchedulerState, function
     MPU_xTaskGetSchedulerState:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGetSchedulerState, MPU_xTaskGetSchedulerStateImpl*/
-        ldr r12, = MPU_xTaskGetSchedulerStateImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGetSchedulerState, MPU_xTaskGetSchedulerStateImpl
 
 
 #endif /* if ( INCLUDE_xTaskGetSchedulerState == 1 ) */
@@ -666,9 +621,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xQueueGetMutexHolder
     .type MPU_xQueueGetMutexHolder, function
     MPU_xQueueGetMutexHolder:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueGetMutexHolder, MPU_xQueueGetMutexHolderImpl*/
-        ldr r12, = MPU_xQueueGetMutexHolderImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueGetMutexHolder, MPU_xQueueGetMutexHolderImpl
 
 #endif /* if ( ( configUSE_MUTEXES == 1 ) && ( INCLUDE_xSemaphoreGetMutexHolder == 1 ) ) */
 
@@ -681,9 +634,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xQueueTakeMutexRecursive
     .type MPU_xQueueTakeMutexRecursive, function
     MPU_xQueueTakeMutexRecursive:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueTakeMutexRecursive, MPU_xQueueTakeMutexRecursiveImpl*/
-        ldr r12, = MPU_xQueueTakeMutexRecursiveImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueTakeMutexRecursive, MPU_xQueueTakeMutexRecursiveImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -692,9 +643,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xQueueGiveMutexRecursive
     .type MPU_xQueueGiveMutexRecursive, function
     MPU_xQueueGiveMutexRecursive:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueGiveMutexRecursive, MPU_xQueueGiveMutexRecursiveImpl*/
-        ldr r12, = MPU_xQueueGiveMutexRecursiveImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueGiveMutexRecursive, MPU_xQueueGiveMutexRecursiveImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -709,9 +658,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xQueueSelectFromSet
     .type MPU_xQueueSelectFromSet, function
     MPU_xQueueSelectFromSet:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueSelectFromSet, MPU_xQueueSelectFromSetImpl*/
-        ldr r12, = MPU_xQueueSelectFromSetImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueSelectFromSet, MPU_xQueueSelectFromSetImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -720,9 +667,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xQueueAddToSet
     .type MPU_xQueueAddToSet, function
     MPU_xQueueAddToSet:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueAddToSet, MPU_xQueueAddToSetImpl*/
-        ldr r12, = MPU_xQueueAddToSetImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xQueueAddToSet, MPU_xQueueAddToSetImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -737,9 +682,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vQueueAddToRegistry
     .type MPU_vQueueAddToRegistry, function
     MPU_vQueueAddToRegistry:
-       /* INVOKE_SYSTEM_CALL #SYSTEM_CALL_vQueueAddToRegistry, MPU_vQueueAddToRegistryImpl*/
-       ldr r12, = MPU_vQueueAddToRegistryImpl
-       bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vQueueAddToRegistry, MPU_vQueueAddToRegistryImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -748,9 +691,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vQueueUnregisterQueue
     .type MPU_vQueueUnregisterQueue, function
     MPU_vQueueUnregisterQueue:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vQueueUnregisterQueue, MPU_vQueueUnregisterQueueImpl*/
-        ldr r12, = MPU_vQueueUnregisterQueueImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vQueueUnregisterQueue, MPU_vQueueUnregisterQueueImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -759,9 +700,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_pcQueueGetName
     .type MPU_pcQueueGetName, function
     MPU_pcQueueGetName:
-       /* INVOKE_SYSTEM_CALL #SYSTEM_CALL_pcQueueGetName, MPU_pcQueueGetNameImpl*/
-       ldr r12, = MPU_pcQueueGetNameImpl
-       bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_pcQueueGetName, MPU_pcQueueGetNameImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -776,9 +715,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_pvTimerGetTimerID
     .type MPU_pvTimerGetTimerID, function
     MPU_pvTimerGetTimerID:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_pvTimerGetTimerID, MPU_pvTimerGetTimerIDImpl*/
-        ldr r12, = MPU_pvTimerGetTimerIDImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_pvTimerGetTimerID, MPU_pvTimerGetTimerIDImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -787,9 +724,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vTimerSetTimerID
     .type MPU_vTimerSetTimerID, function
     MPU_vTimerSetTimerID:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTimerSetTimerID, MPU_vTimerSetTimerIDImpl*/
-        ldr r12, = MPU_vTimerSetTimerIDImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTimerSetTimerID, MPU_vTimerSetTimerIDImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -798,9 +733,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTimerIsTimerActive
     .type MPU_xTimerIsTimerActive, function
     MPU_xTimerIsTimerActive:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerIsTimerActive, MPU_xTimerIsTimerActiveImpl*/
-        ldr r12, = MPU_xTimerIsTimerActiveImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerIsTimerActive, MPU_xTimerIsTimerActiveImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -809,9 +742,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTimerGetTimerDaemonTaskHandle
     .type MPU_xTimerGetTimerDaemonTaskHandle, function
     MPU_xTimerGetTimerDaemonTaskHandle:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetTimerDaemonTaskHandle, MPU_xTimerGetTimerDaemonTaskHandleImpl*/
-        ldr r12, = MPU_xTimerGetTimerDaemonTaskHandleImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetTimerDaemonTaskHandle, MPU_xTimerGetTimerDaemonTaskHandleImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -820,9 +751,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTimerGenericCommandFromTaskEntry
     .type MPU_xTimerGenericCommandFromTaskEntry, function
     MPU_xTimerGenericCommandFromTaskEntry:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGenericCommandFromTask, MPU_xTimerGenericCommandFromTaskImpl*/
-        ldr r12, = MPU_xTimerGenericCommandFromTaskImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGenericCommandFromTask, MPU_xTimerGenericCommandFromTaskImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -831,9 +760,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_pcTimerGetName
     .type MPU_pcTimerGetName, function
     MPU_pcTimerGetName:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_pcTimerGetName, MPU_pcTimerGetNameImpl*/
-        ldr r12, = MPU_pcTimerGetNameImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_pcTimerGetName, MPU_pcTimerGetNameImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -842,9 +769,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_vTimerSetReloadMode
     .type MPU_vTimerSetReloadMode, function
     MPU_vTimerSetReloadMode:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTimerSetReloadMode, MPU_vTimerSetReloadModeImpl*/
-        ldr r12, = MPU_vTimerSetReloadModeImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_vTimerSetReloadMode, MPU_vTimerSetReloadModeImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -853,9 +778,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTimerGetReloadMode
     .type MPU_xTimerGetReloadMode, function
     MPU_xTimerGetReloadMode:
-       /* INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetReloadMode, MPU_xTimerGetReloadModeImpl*/
-       ldr r12, = MPU_xTimerGetReloadModeImpl
-       bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetReloadMode, MPU_xTimerGetReloadModeImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -864,9 +787,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_uxTimerGetReloadMode
     .type MPU_uxTimerGetReloadMode, function
     MPU_uxTimerGetReloadMode:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTimerGetReloadMode, MPU_uxTimerGetReloadModeImpl*/
-        ldr r12, = MPU_uxTimerGetReloadModeImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_uxTimerGetReloadMode, MPU_uxTimerGetReloadModeImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -875,9 +796,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTimerGetPeriod
     .type MPU_xTimerGetPeriod, function
     MPU_xTimerGetPeriod:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetPeriod, MPU_xTimerGetPeriodImpl*/
-        ldr r12, = MPU_xTimerGetPeriodImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetPeriod, MPU_xTimerGetPeriodImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -886,9 +805,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTimerGetExpiryTime
     .type MPU_xTimerGetExpiryTime, function
     MPU_xTimerGetExpiryTime:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetExpiryTime, MPU_xTimerGetExpiryTimeImpl*/
-        ldr r12, = MPU_xTimerGetExpiryTimeImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTimerGetExpiryTime, MPU_xTimerGetExpiryTimeImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -903,9 +820,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskGenericNotifyEntry
     .type MPU_xTaskGenericNotifyEntry, function
     MPU_xTaskGenericNotifyEntry:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGenericNotify, MPU_xTaskGenericNotifyImpl*/
-        ldr r12, = MPU_xTaskGenericNotifyImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGenericNotify, MPU_xTaskGenericNotifyImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -914,9 +829,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskGenericNotifyWaitEntry
     .type MPU_xTaskGenericNotifyWaitEntry, function
     MPU_xTaskGenericNotifyWaitEntry:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGenericNotifyWait, MPU_xTaskGenericNotifyWaitImpl*/
-        ldr r12, = MPU_xTaskGenericNotifyWaitImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGenericNotifyWait, MPU_xTaskGenericNotifyWaitImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -925,9 +838,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_ulTaskGenericNotifyTake
     .type MPU_ulTaskGenericNotifyTake, function
     MPU_ulTaskGenericNotifyTake:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_ulTaskGenericNotifyTake, MPU_ulTaskGenericNotifyTakeImpl*/
-        ldr r12, = MPU_ulTaskGenericNotifyTakeImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_ulTaskGenericNotifyTake, MPU_ulTaskGenericNotifyTakeImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -936,9 +847,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_xTaskGenericNotifyStateClear
     .type MPU_xTaskGenericNotifyStateClear, function
     MPU_xTaskGenericNotifyStateClear:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGenericNotifyStateClear, MPU_xTaskGenericNotifyStateClearImpl*/
-        ldr r12, = MPU_xTaskGenericNotifyStateClearImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_xTaskGenericNotifyStateClear, MPU_xTaskGenericNotifyStateClearImpl
 
     /* ------------------------------------------------------------------------------- */
 
@@ -947,9 +856,7 @@ MPU_xQueueSemaphoreTake:
     .global MPU_ulTaskGenericNotifyValueClear
     .type MPU_ulTaskGenericNotifyValueClear, function
     MPU_ulTaskGenericNotifyValueClear:
-        /*INVOKE_SYSTEM_CALL #SYSTEM_CALL_ulTaskGenericNotifyValueClear, MPU_ulTaskGenericNotifyValueClearImpl*/
-        ldr r12, = MPU_ulTaskGenericNotifyValueClearImpl
-        bx r12
+        INVOKE_SYSTEM_CALL #SYSTEM_CALL_ulTaskGenericNotifyValueClear, MPU_ulTaskGenericNotifyValueClearImpl
 
     /* ------------------------------------------------------------------------------- */
 

@@ -173,11 +173,11 @@ nothing to return to.  To avoid this define configTASK_RETURN_ADDRESS to 0.  */
 
 /* The following constant describe the hardware, and are correct for the
 Zynq MPU. */
-#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( CPU_GIC_DISTRIBUTOR )
+#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 	(0x31208000 + 0x1000)	/*( CPU_GIC_DISTRIBUTOR )*/
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( 0x1000 )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
 
-#define configENABLE_MPU                                       1U
+#define configENABLE_MPU                                       0U
 #define configENABLE_FPU                                       1U
 #define configUSE_MPU_WRAPPERS_V1                              0U
 #define configTOTAL_MPU_REGIONS 16

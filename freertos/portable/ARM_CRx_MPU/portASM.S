@@ -49,10 +49,7 @@
     .extern vTaskSwitchContext
     .extern vApplicationIRQHandler
 
-    .global FreeRTOS_SWI_Handler
-
 /* ----------------------------------------------------------------------------------- */
-
 
 /* Save the context of a FreeRTOS Task. */
 .macro portSAVE_CONTEXT
@@ -109,11 +106,6 @@
     ADD     R1, LR, #0x4        /* R1 now points to the xMPUSettings in TCB. */
     LDR     LR, [LR]            /* LR = pxTopOfStack i.e. the address where to restore the task context from. */
 
-
-    LDR     r12, =0xB7000000
-    LDR     r1, =0x9010
-    STR     r1, [r12]
-
     /* When creating a loop label in a macro it has to be a numeric label.
      * for( R5 = portFIRST_CONFIGURABLE_REGION ; R5 <= portNUM_CONFIGURABLE_REGIONS ; R5++ ) */
     MOV     R5, #portFIRST_CONFIGURABLE_REGION
@@ -129,10 +121,6 @@
         CMP     R5, #portNUM_CONFIGURABLE_REGIONS
         BLE     123b
 
-    LDR     r12, =0xB7000000
-    LDR     r1, =0x9013
-    STR     r1, [r12]
-
     LDR     R1, =ulCriticalNesting /* R1 = &( ulCriticalNesting ). */
     LDM     LR!, { R2 }            /* R2 = Stored ulCriticalNesting. */
     STR     R2, [R1]               /* Restore ulCriticalNesting. */
@@ -142,10 +130,6 @@
     VMSR    FPSCR, R1       /* Restore FPSCR. */
     VLDM   LR!, { D0-D15 }  /* Restore D0-D15. */
 #endif /* portENABLE_FPU*/
-
-    LDR     r12, =0xB7000000
-    LDR     r1, =0x9016
-    STR     r1, [r12]
 
     /* LDM (User registers) - In a PL1 mode other than System mode, LDM (User
      * registers) loads multiple User mode registers from consecutive memory
@@ -165,15 +149,7 @@
     LDM     LR, { R0-R14 }^
     ADD     LR, LR, #60 /* R0-R14 - Total 155 register, each 4 byte wide. */
 
-    LDR     r12, =0xB7000000
-    LDR     r1, =0x9019
-    STR     r1, [r12]
-
     RFE     LR  /* Restore PC and CPSR from the context. */
-
-    LDR     r12, =0xB7000000
-    LDR     r1, =0x9018
-    STR     r1, [r12]
 
 .endm
 
@@ -191,11 +167,11 @@ vPortStartFirstTask:
      * be called from the System mode. We, therefore, switch to the Supervisor
      * mode before calling portRESTORE_CONTEXT. */
     CPS #SVC_MODE
-
+/*
     LDR     r12, =0xB7000000
-    LDR     r1, =0x9910
+    LDR     r1, =0x7718
     STR     r1, [r12]
-
+*/
     portRESTORE_CONTEXT
 
 /* ----------------------------------------------------------------------------------- */
@@ -245,9 +221,7 @@ svcHandlerExit:
 svcPortYield:
     POP     { R11-R12 }
     portSAVE_CONTEXT
-    /* BL      vTaskSwitchContext */
-    ldr r12, = vTaskSwitchContext
-    bx r12
+    BL      vTaskSwitchContext
     portRESTORE_CONTEXT
 
 svcSystemCallExit:
@@ -374,7 +348,6 @@ vMPUEnable:
 
     MRC     p15, #0, R0, c1, c0, #0 /* R0 = System Control Register (SCTLR). */
     ORR     R0,  R0, #0x1 /* R0 = R0 | 0x1. Set the M bit in SCTLR. */
-
     DSB
     MCR     p15, #0, R0, c1, c0, #0 /* SCTLR = R0. */
     ISB
@@ -465,9 +438,7 @@ FreeRTOS_IRQ_Handler:
 
     /* Call the application provided IRQ handler. */
     PUSH    { R0-R3, LR }
-    /* BL      vApplicationIRQHandler */
-    ldr r12, = vApplicationIRQHandler
-    bx r12
+    BL      vApplicationIRQHandler
     POP     { R0-R3, LR }
 
     /* Disable IRQs incase vApplicationIRQHandler enabled them for re-entry. */
@@ -521,29 +492,12 @@ switch_before_exit:
     portSAVE_CONTEXT
 
     /* Call the function that selects the new task to execute. */
-    /*BLX     vTaskSwitchContext  */
-    ldr r12, = vTaskSwitchContext
-    bx r12
+    BLX     vTaskSwitchContext
 
     /* Restore the context of, and branch to, the task selected to execute
      * next. */
     portRESTORE_CONTEXT
 
 /* ----------------------------------------------------------------------------------- */
-
-/******************************************************************************
- * SVC handler is used to start the scheduler.
- *****************************************************************************/
-.align 4
-.type FreeRTOS_SWI_Handler, %function
-FreeRTOS_SWI_Handler:
-	/* Save the context of the current task and select a new task to run. */
-	portSAVE_CONTEXT
-	LDR R0, vTaskSwitchContextConst
-	BLX	R0
-	portRESTORE_CONTEXT
-
-
-vTaskSwitchContextConst: .word vTaskSwitchContext
 
 .end

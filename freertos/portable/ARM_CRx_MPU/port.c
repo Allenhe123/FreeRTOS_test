@@ -448,26 +448,25 @@ BaseType_t xPortIsTaskPrivileged( void )
 /* PRIVILEGED_FUNCTION */
 BaseType_t xPortStartScheduler( void )
 {
-    int* p = 0xB7000000;
-*p = 0x1111;
+int* p = 0xB7000000;
+*p = 0x7714;
     /* Start the timer that generates the tick ISR. */
     configSETUP_TICK_INTERRUPT();
-*p = 0x1112;
+*p = 0x7715;
     /* Configure MPU regions that are common to all tasks. */
     prvSetupMPU();
-*p = 0x1113;
+*p = 0x7716;
     prvPortSchedulerRunning = pdTRUE;
 
     /* Load the context of the first task. */
     vPortStartFirstTask();
-*p = 0x1114;
+*p = 0x7717;
     /* Will only get here if vTaskStartScheduler() was called with the CPU in
      * a non-privileged mode or the binary point register was not set to its lowest
      * possible value. prvTaskExitError() is referenced to prevent a compiler
      * warning about it being defined but not referenced in the case that the user
      * defines their own exit address. */
     ( void ) prvTaskExitError();
-*p = 0x1115;    
     return pdFALSE;
 }
 
@@ -534,8 +533,7 @@ static void prvSetupMPU( void )
 
     /* Disable the MPU before programming it. */
     vMPUDisable();
-int* p = 0xB7000000;
-*p = 0x333;
+
     /* Priv: RX, Unpriv: RX for entire Flash. */
     ulRegionLength = ( uint32_t ) __FLASH_segment_end__ - ( uint32_t ) __FLASH_segment_start__;
     ulRegionLengthEncoded = prvGetMPURegionSizeEncoding( ulRegionLength );
@@ -569,7 +567,6 @@ int* p = 0xB7000000;
 
     /* After setting default regions, enable the MPU. */
     vMPUEnable();
-*p = 0x338;
 }
 
 /* ----------------------------------------------------------------------------------- */
@@ -848,12 +845,13 @@ void vPortExitCritical( void )
     }
 }
 /* ----------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------- */
 
-/* The critical section macros only mask interrupts up to an application
- * determined priority level.  Sometimes it is necessary to turn interrupt off in
- * the CPU itself before modifying certain hardware registers. */
+/*
+ * In all GICs 255 can be written to the priority mask register to unmask all
+ * (but the lowest) interrupt priority.
+ */
+#define portUNMASK_VALUE                 ( 0xFFUL )
+
 #define portCPU_IRQ_DISABLE()                  \
     __asm volatile ( "CPSID i" ::: "memory" ); \
     __asm volatile ( "DSB" );                  \
@@ -864,27 +862,54 @@ void vPortExitCritical( void )
     __asm volatile ( "DSB" );                  \
     __asm volatile ( "ISB" );
 
+
 /* Macro to unmask all interrupt priorities. */
 #define portCLEAR_INTERRUPT_MASK()                            \
     {                                                         \
-        portCPU_IRQ_DISABLE();                                \    
-        __asm volatile ( "DSB		\n"                       \
-                         "ISB		\n");                         \
+        portCPU_IRQ_DISABLE();                                \
+        portICCPMR_PRIORITY_MASK_REGISTER = portUNMASK_VALUE; \
+        __asm volatile ( "DSB       \n"                       \
+                         "ISB       \n" );                    \
         portCPU_IRQ_ENABLE();                                 \
     }
 
-void FreeRTOS_Tick_Handler( void *param)
+#define portINTERRUPT_PRIORITY_REGISTER_OFFSET    0x400UL
+#define portMAX_8_BIT_VALUE                       ( ( uint8_t ) 0xff )
+#define portBIT_0_SET                             ( ( uint8_t ) 0x01 )
+
+
+// void FreeRTOS_Tick_Handler( void )
+// {
+//     /*
+//      * Set interrupt mask before altering scheduler structures.   The tick
+//      * handler runs at the lowest priority, so interrupts cannot already be masked,
+//      * so there is no need to save and restore the current mask value.  It is
+//      * necessary to turn off interrupts in the CPU itself while the ICCPMR is being
+//      * updated.
+//      */
+//     portCPU_IRQ_DISABLE();
+//     portICCPMR_PRIORITY_MASK_REGISTER = ( uint32_t ) ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT );
+//     __asm volatile ( "dsb       \n"
+//                      "isb       \n" ::: "memory" );
+//     portCPU_IRQ_ENABLE();
+
+//     /* Increment the RTOS tick. */
+//     if( xTaskIncrementTick() != pdFALSE )
+//     {
+//         ulPortYieldRequired = pdTRUE;
+//     }
+
+//     /* Ensure all interrupt priorities are active again. */
+//     portCLEAR_INTERRUPT_MASK();
+//     configCLEAR_TICK_INTERRUPT();
+// }
+
+
+void FreeRTOS_Tick_Handler( void )
 {
-    /* Set interrupt mask before altering scheduler structures.   The tick
-     * handler runs at the lowest priority, so interrupts cannot already be masked,
-     * so there is no need to save and restore the current mask value.  It is
-     * necessary to turn off interrupts in the CPU itself while the ICCPMR is being
-     * updated. */
-    portCPU_IRQ_DISABLE();
-////    portICCPMR_PRIORITY_MASK_REGISTER = ( uint32_t ) ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT );
-    __asm volatile ( "dsb		\n"
-                     "isb		\n"::: "memory" );
-    portCPU_IRQ_ENABLE();
+    uint32_t ulInterruptStatus;
+
+    ulInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
 
     /* Increment the RTOS tick. */
     if( xTaskIncrementTick() != pdFALSE )
@@ -892,10 +917,7 @@ void FreeRTOS_Tick_Handler( void *param)
         ulPortYieldRequired = pdTRUE;
     }
 
-    /* Ensure all interrupt priorities are active again. */
-    portCLEAR_INTERRUPT_MASK();
+    portCLEAR_INTERRUPT_MASK_FROM_ISR( ulInterruptStatus );
+
     configCLEAR_TICK_INTERRUPT();
 }
-
-
-/*-----------------------------------------------------------*/

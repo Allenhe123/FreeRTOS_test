@@ -1502,7 +1502,6 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
                                             TaskHandle_t * const pxCreatedTask )
     {
         TCB_t * pxNewTCB;
-
         configASSERT( pxTaskDefinition->puxStackBuffer );
 
         if( pxTaskDefinition->puxStackBuffer != NULL )
@@ -1534,7 +1533,7 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
                                       pxTaskDefinition->pvParameters,
                                       pxTaskDefinition->uxPriority,
                                       pxCreatedTask, pxNewTCB,
-                                      pxTaskDefinition->xRegions );
+                                      pxTaskDefinition->xRegions );                                    
             }
         }
         else
@@ -3665,7 +3664,8 @@ static BaseType_t prvCreateIdleTasks( void )
 void vTaskStartScheduler( void )
 {
     BaseType_t xReturn;
-
+int* p = 0xB7000000;
+*p = 0x7711;
     traceENTER_vTaskStartScheduler();
 
     #if ( configUSE_CORE_AFFINITY == 1 ) && ( configNUMBER_OF_CORES > 1 )
@@ -3733,11 +3733,11 @@ void vTaskStartScheduler( void )
 
         /* Setting up the timer tick is hardware specific and thus in the
          * portable interface. */
-
+*p = 0x7712;
         /* The return value for xPortStartScheduler is not required
          * hence using a void datatype. */
         ( void ) xPortStartScheduler();
-
+*p = 0x7713;
         /* In most cases, xPortStartScheduler() will not return. If it
          * returns pdTRUE then there was not enough heap memory available
          * to create either the Idle or the Timer task. If it returned
