@@ -151,88 +151,88 @@ ResetHandler:
 // * The region at 0x0 over the Vector table is needed to support semihosting
 
 #if 1
-//init mpu region 0,Device 512M          0~0x10000000 （R0）
-        MOV    r0, #0                     //region 1
+//init mpu region 0,Device 256M          0~0x10000000 （R0）
+        MOV    r0, #13                    //region 12
         MOV    r3, #0                     //base addr from 0
 //      MOV    r1,#0x310                  //tex[5:3],ap[10:8],c=0,b=0,ap=3    ap=3,read+write,tex=2,non-share device
         MOV    r1,#0x30B                  //tex[5:3],ap[10:8],c=0,b=0,ap=3    ap=3,read+write,tex=1,normal(no cache)
 //      MOV    r1,#0x608                  //tex[5:3],ap[10:8],c=0,b=0,ap=6    ap=6,read only, tex=1,normal(no cache)
-        MOV    r2,#0x39                   //size 512M,enable
+        MOV    r2,#0x37                   //size 256M,enable
         MCR    p15,0,r0,c6,c2,0           // Set region number
         MCR    p15,0,r3,c6,c1,0           // Region base address         
         MCR    p15,0,r1,c6,c1,4           // Region access control        
         MCR    p15,0,r2,c6,c1,2           // Region size and enable 
 
-//init mpu region 1,Device 128M          0x10000000~0x18000000 （R0）
-        MOV    r0, #1                     //region shi 
+//init mpu region 1,Device 1G          0x10000000~0x50000000 （R0）
+        MOV    r0, #12                    //region 12 
         MOV    r3, #0x10000000            //base addr from 0
         MOV    r1,#0x310                  //normal,tex[5：3] 001 ,c=0,b=0,ap=3
-        MOV    r2,#0x35                   //size 128M,enable
+        MOV    r2,#0x3B                   //size 1G,enable
         MCR    p15,0,r0,c6,c2,0           // Set region number
         MCR    p15,0,r3,c6,c1,0           // Region base address         
         MCR    p15,0,r1,c6,c1,4           // Region access control        
         MCR    p15,0,r2,c6,c1,2           // Region size and enable 
         
 //init mpu region 2,rom sram 128M          0x18000000~0x20000000 （rw）
-        MOV    r0, #2                     //region 1
-        MOV    r3, #0x18000000            //base addr from 0
-        MOV    r1,#0x30F                  //normal,tex[5：3] 001 ,c=0,b=0,ap=3
-        MOV    r2,#0x25                   //size 512K,enable
+//        MOV    r0, #2                     //region 1
+//        MOV    r3, #0x18000000            //base addr from 0
+//        MOV    r1,#0x30F                  //normal,tex[5：3] 001 ,c=0,b=0,ap=3
+//        MOV    r2,#0x25                   //size 512K,enable
+//        MCR    p15,0,r0,c6,c2,0           // Set region number
+//        MCR    p15,0,r3,c6,c1,0           // Region base address         
+//        MCR    p15,0,r1,c6,c1,4           // Region access control        
+//        MCR    p15,0,r2,c6,c1,2           // Region size and enable             
+
+
+//init mpu region 3,Device 512M          0x20000000~0x40000000 （R0）
+//        MOV    r0, #3                     // region 0
+//        MOV    r3, #0x20000000            // base addr from 0x20000000 
+//        MOV    r1,#0x310                  // share device,tex[3] 000 ,c=0,b=1,ap=3
+//        MOV    r2,#0x39                   // size 512M,enable    
+//        MCR    p15,0,r0,c6,c2,0           // Set region number
+//        MCR    p15,0,r3,c6,c1,0           // Region base address         
+//        MCR    p15,0,r1,c6,c1,4           // Region access control        
+//        MCR    p15,0,r2,c6,c1,2           // Region size and enable 
+    
+//init mpu region 4,Device 512M          0x30000000~0x40000000 （R0）
+//        MOV    r0, #4                     // region 0
+//        MOV    r3, #0x30000000            // base addr from 0x20000000 
+//        MOV    r1,#0x301                  // share device,tex[3] 000 ,c=0,b=1,ap=3
+//        MOV    r2,#0x37                   // size 512M,enable    
+//        MCR    p15,0,r0,c6,c2,0           // Set region number
+//        MCR    p15,0,r3,c6,c1,0           // Region base address         
+//        MCR    p15,0,r1,c6,c1,4           // Region access control        
+//        MCR    p15,0,r2,c6,c1,2           // Region size and enable 
+        
+//init mpu region 4,Device 1G         0x40000000~0x80000000 （R0）
+        MOV    r0, #14                    // region 14
+        MOV    r3, #0x40000000            // base addr from 0x20000000 
+        MOV    r1,#0x301                  // share device,tex[3] 000 ,c=0,b=1,ap=3
+        MOV    r2,#0x3B                   // size 1G,enable    
         MCR    p15,0,r0,c6,c2,0           // Set region number
         MCR    p15,0,r3,c6,c1,0           // Region base address         
         MCR    p15,0,r1,c6,c1,4           // Region access control        
-        MCR    p15,0,r2,c6,c1,2           // Region size and enable             
-
-
-//init mpu region 3,Device 1G          0x20000000~0x30000000 （R0）
-        MOV    r0, #3                   //region 0
-        MOV    r3, #0x20000000          //base addr from 0x20000000 
-        MOV    r1,#0x310                // share device,tex[3] 000 ,c=0,b=1,ap=3
-        MOV    r2,#0x39                   //size 1G,enable    
-        MCR    p15,0,r0,c6,c2,0            // Set region number
-        MCR    p15,0,r3,c6,c1,0           // Region base address         
-        MCR    p15,0,r1,c6,c1,4           // Region access control        
         MCR    p15,0,r2,c6,c1,2           // Region size and enable 
-    
-//init mpu region 4,Device 512M          0x30000000~0x40000000 （R0）
-        MOV    r0, #4                     //region 0
-        MOV    r3, #0x30000000              //base addr from 0x20000000 
-        MOV    r1,#0x301                // share device,tex[3] 000 ,c=0,b=1,ap=3
-        MOV    r2,#0x37                   //size 512M,enable    
-        MCR    p15,0,r0,c6,c2,0            // Set region number
-        MCR    p15,0,r3,c6,c1,0           // Region base address         
-        MCR    p15,0,r1,c6,c1,4           // Region access control        
-        MCR    p15,0,r2,c6,c1,2           // Region size and enable 
-        
-//init mpu region 4,Device 512M          0x40000000~0x50000000 （R0）
-        MOV    r0, #5                     //region 0
-        MOV    r3, #0x40000000              //base addr from 0x20000000 
-        MOV    r1,#0x301                // share device,tex[3] 000 ,c=0,b=1,ap=3
-        MOV    r2,#0x3B                   //size 512M,enable    
-        MCR    p15,0,r0,c6,c2,0            // Set region number
+
+//init mpu region 5,DDR  2G           0x80000000~0x1 00000000 （R0）
+        MOV    r0, #15                    // region 15
+        MOV    r3, #0x80000000            // base addr from 0x80000000 
+        MOV    r1,#0x308                  // share device,tex[3] 000 ,c=0,b=1,ap=3
+        MOV    r2,#0x3d                   // size 2G,enable    
+        MCR    p15,0,r0,c6,c2,0           // Set region number
         MCR    p15,0,r3,c6,c1,0           // Region base address         
         MCR    p15,0,r1,c6,c1,4           // Region access control        
         MCR    p15,0,r2,c6,c1,2           // Region size and enable 
 
 //init mpu region 5,DDR  2G           0x80000000~0x1 00000000 （R0）
-        MOV    r0, #6                    //region 0
-        MOV    r3, #0x80000000              //base addr from 0x20000000 
-        MOV    r1,#0x308                // share device,tex[3] 000 ,c=0,b=1,ap=3
-        MOV    r2,#0x3b                  //size 2G,enable    
-        MCR    p15,0,r0,c6,c2,0            // Set region number
-        MCR    p15,0,r3,c6,c1,0           // Region base address         
-        MCR    p15,0,r1,c6,c1,4           // Region access control        
-        MCR    p15,0,r2,c6,c1,2           // Region size and enable 
-
-//init mpu region 5,DDR  2G           0x80000000~0x1 00000000 （R0）
-        MOV    r0, #7                    //region 0
-        MOV    r3, #0xc0000000              //base addr from 0x20000000 
-        MOV    r1,#0x301                // share device,tex[3] 000 ,c=0,b=1,ap=3
-        MOV    r2,#0x3b                  //size 2G,enable    
-        MCR    p15,0,r0,c6,c2,0            // Set region number
-        MCR    p15,0,r3,c6,c1,0           // Region base address         
-        MCR    p15,0,r1,c6,c1,4           // Region access control        
-        MCR    p15,0,r2,c6,c1,2           // Region size and enable
+//        MOV    r0, #7                     // region 0
+//        MOV    r3, #0xc0000000            // base addr from 0x20000000 
+//        MOV    r1,#0x301                  // share device,tex[3] 000 ,c=0,b=1,ap=3
+//        MOV    r2,#0x3b                   // size 2G,enable    
+//        MCR    p15,0,r0,c6,c2,0           // Set region number
+//        MCR    p15,0,r3,c6,c1,0           // Region base address         
+//        MCR    p15,0,r1,c6,c1,4           // Region access control        
+//        MCR    p15,0,r2,c6,c1,2           // Region size and enable
 #endif
 
 #if __ARM_FP  //def __ARM_FP
