@@ -3664,8 +3664,6 @@ static BaseType_t prvCreateIdleTasks( void )
 void vTaskStartScheduler( void )
 {
     BaseType_t xReturn;
-int* p = 0xB7000000;
-*p = 0x7711;
     traceENTER_vTaskStartScheduler();
 
     #if ( configUSE_CORE_AFFINITY == 1 ) && ( configNUMBER_OF_CORES > 1 )
@@ -3733,11 +3731,11 @@ int* p = 0xB7000000;
 
         /* Setting up the timer tick is hardware specific and thus in the
          * portable interface. */
-*p = 0x7712;
+
         /* The return value for xPortStartScheduler is not required
          * hence using a void datatype. */
         ( void ) xPortStartScheduler();
-*p = 0x7713;
+
         /* In most cases, xPortStartScheduler() will not return. If it
          * returns pdTRUE then there was not enough heap memory available
          * to create either the Idle or the Timer task. If it returned
@@ -4669,6 +4667,9 @@ BaseType_t xTaskCatchUpTicks( TickType_t xTicksToCatchUp )
 
 BaseType_t xTaskIncrementTick( void )
 {
+    int* pp = 0xb700000c;
+    *pp = 0x1256;
+
     TCB_t * pxTCB;
     TickType_t xItemValue;
     BaseType_t xSwitchRequired = pdFALSE;

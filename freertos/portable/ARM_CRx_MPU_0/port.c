@@ -448,14 +448,14 @@ BaseType_t xPortIsTaskPrivileged( void )
 /* PRIVILEGED_FUNCTION */
 BaseType_t xPortStartScheduler( void )
 {
-int* p = 0xB7000000;
+int* p = 0xB7000020;
 *p = 0x7714;
     /* Start the timer that generates the tick ISR. */
     configSETUP_TICK_INTERRUPT();
 *p = 0x7715;
     /* Configure MPU regions that are common to all tasks. */
     prvSetupMPU();
-*p = 0x7716;
+*p = 0x7756;
     prvPortSchedulerRunning = pdTRUE;
 
     /* Load the context of the first task. */
@@ -878,20 +878,42 @@ void vPortExitCritical( void )
 #define portBIT_0_SET                             ( ( uint8_t ) 0x01 )
 
 
+__attribute__((section(".privileged_functions"))) void FreeRTOS_Tick_Handler( void* param ) 
+{
+int* p = 0xB7000024;
+*p = 0x1111;
+
+    /*
+     * Set interrupt mask before altering scheduler structures.   The tick
+     * handler runs at the lowest priority, so interrupts cannot already be masked,
+     * so there is no need to save and restore the current mask value.  It is
+     * necessary to turn off interrupts in the CPU itself while the ICCPMR is being
+     * updated.
+     */
+    portCPU_IRQ_DISABLE();
+    portICCPMR_PRIORITY_MASK_REGISTER = ( uint32_t ) ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT );
+    __asm volatile ( "dsb       \n"
+                     "isb       \n" ::: "memory" );
+    portCPU_IRQ_ENABLE();
+*p = 0x1112;
+    /* Increment the RTOS tick. */
+    if( xTaskIncrementTick() != pdFALSE )
+    {
+        ulPortYieldRequired = pdTRUE;
+    }
+*p = 0x1113;
+    /* Ensure all interrupt priorities are active again. */
+    portCLEAR_INTERRUPT_MASK();
+    configCLEAR_TICK_INTERRUPT();
+*p = 0x1115;
+}
+
+
 // void FreeRTOS_Tick_Handler( void )
 // {
-//     /*
-//      * Set interrupt mask before altering scheduler structures.   The tick
-//      * handler runs at the lowest priority, so interrupts cannot already be masked,
-//      * so there is no need to save and restore the current mask value.  It is
-//      * necessary to turn off interrupts in the CPU itself while the ICCPMR is being
-//      * updated.
-//      */
-//     portCPU_IRQ_DISABLE();
-//     portICCPMR_PRIORITY_MASK_REGISTER = ( uint32_t ) ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT );
-//     __asm volatile ( "dsb       \n"
-//                      "isb       \n" ::: "memory" );
-//     portCPU_IRQ_ENABLE();
+//     uint32_t ulInterruptStatus;
+
+//     ulInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
 
 //     /* Increment the RTOS tick. */
 //     if( xTaskIncrementTick() != pdFALSE )
@@ -899,25 +921,7 @@ void vPortExitCritical( void )
 //         ulPortYieldRequired = pdTRUE;
 //     }
 
-//     /* Ensure all interrupt priorities are active again. */
-//     portCLEAR_INTERRUPT_MASK();
+//     portCLEAR_INTERRUPT_MASK_FROM_ISR( ulInterruptStatus );
+
 //     configCLEAR_TICK_INTERRUPT();
 // }
-
-
-void FreeRTOS_Tick_Handler( void )
-{
-    uint32_t ulInterruptStatus;
-
-    ulInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
-
-    /* Increment the RTOS tick. */
-    if( xTaskIncrementTick() != pdFALSE )
-    {
-        ulPortYieldRequired = pdTRUE;
-    }
-
-    portCLEAR_INTERRUPT_MASK_FROM_ISR( ulInterruptStatus );
-
-    configCLEAR_TICK_INTERRUPT();
-}

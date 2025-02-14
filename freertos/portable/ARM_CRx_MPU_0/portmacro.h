@@ -251,7 +251,7 @@ typedef uint32_t TickType_t;
 
 /* ----------------------------- Port Assembly Functions ----------------------------- */
 
-void FreeRTOS_Tick_Handler( void );
+__attribute__((section(".privileged_functions"))) void FreeRTOS_Tick_Handler( void* param);
 
 /**
  * @brief FreeRTOS Supervisor Call (SVC) Handler.

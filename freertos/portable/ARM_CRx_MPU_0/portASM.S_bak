@@ -109,8 +109,17 @@
     /* When creating a loop label in a macro it has to be a numeric label.
      * for( R5 = portFIRST_CONFIGURABLE_REGION ; R5 <= portNUM_CONFIGURABLE_REGIONS ; R5++ ) */
     MOV     R5, #portFIRST_CONFIGURABLE_REGION
+
+    LDR     r12, =0xB7000000
+    LDR     r11, =0x7738
+    STR     r11, [r12]
+
     123:
         LDMIA   R1!, { R2-R4 }  /* R2 = ulRegionSize, R3 = ulRegionAttribute, R4 = ulRegionBaseAddress. */
+
+        LDR     r12, =0xB7000000
+        LDR     r11, =0x7739
+        STR     r11, [r12]
 
         MCR     p15, #0, R5, c6, c2, #0 /* MPU Region Number Register. */
         MCR     p15, #0, R4, c6, c1, #0 /* MPU Region Base Address Register. */
@@ -121,15 +130,24 @@
         CMP     R5, #portNUM_CONFIGURABLE_REGIONS
         BLE     123b
 
+    LDR     r12, =0xB7000000
+    LDR     r11, =0x7740
+    STR     r11, [r12]
+
     LDR     R1, =ulCriticalNesting /* R1 = &( ulCriticalNesting ). */
     LDM     LR!, { R2 }            /* R2 = Stored ulCriticalNesting. */
     STR     R2, [R1]               /* Restore ulCriticalNesting. */
+    
+    LDR     r12, =0xB7000000
+    LDR     r11, =0x7741
+    STR     r11, [r12]
 
 #if ( portENABLE_FPU == 1 )
     LDM     LR!, { R1 }     /* R1 = Stored FPSCR.  */
     VMSR    FPSCR, R1       /* Restore FPSCR. */
     VLDM   LR!, { D0-D15 }  /* Restore D0-D15. */
 #endif /* portENABLE_FPU*/
+
 
     /* LDM (User registers) - In a PL1 mode other than System mode, LDM (User
      * registers) loads multiple User mode registers from consecutive memory
@@ -149,9 +167,22 @@
     LDM     LR, { R0-R14 }^
     ADD     LR, LR, #60 /* R0-R14 - Total 155 register, each 4 byte wide. */
 
+    LDR     r12, =0xB7000000
+    LDR     r11, [LR]
+    STR     r11, [r12]
+
+    LDR     r11, [LR, #4]
+    STR     r11, [r12, #4]
+
     RFE     LR  /* Restore PC and CPSR from the context. */
 
+    LDR     r12, =0xB7000000
+    LDR     r11, =0x7743
+    STR     r11, [r12]
+
 .endm
+
+/* ----------------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------------------- */
 
@@ -162,17 +193,25 @@
 .global vPortStartFirstTask
 .type vPortStartFirstTask, %function
 vPortStartFirstTask:
+    LDR     r12, =0xB7000000
+    LDR     r11, =0x7758
+    STR     r11, [r12]
+
     /* This function is called from System Mode to start the FreeRTOS-Kernel.
      * As described in the portRESTORE_CONTEXT macro, portRESTORE_CONTEXT cannot
      * be called from the System mode. We, therefore, switch to the Supervisor
      * mode before calling portRESTORE_CONTEXT. */
     CPS #SVC_MODE
-/*
+    
     LDR     r12, =0xB7000000
-    LDR     r1, =0x7718
-    STR     r1, [r12]
-*/
+    LDR     r11, =0x7759
+    STR     r11, [r12]
+
     portRESTORE_CONTEXT
+
+    LDR     r12, =0xB7000000
+    LDR     r11, =0x7760
+    STR     r11, [r12]
 
 /* ----------------------------------------------------------------------------------- */
 

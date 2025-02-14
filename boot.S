@@ -152,10 +152,10 @@ ResetHandler:
 
 #if 1
 //init mpu region 0,Device 256M          0~0x10000000 （R0）
-        MOV    r0, #13                    //region 12
+        MOV    r0, #13                    //region 13
         MOV    r3, #0                     //base addr from 0
 //      MOV    r1,#0x310                  //tex[5:3],ap[10:8],c=0,b=0,ap=3    ap=3,read+write,tex=2,non-share device
-        MOV    r1,#0x30B                  //tex[5:3],ap[10:8],c=0,b=0,ap=3    ap=3,read+write,tex=1,normal(no cache)
+        MOV    r1,#0x30F                  //tex[5:3],ap[10:8],c=0,b=0,ap=3    ap=3,read+write,tex=1,normal(no cache)
 //      MOV    r1,#0x608                  //tex[5:3],ap[10:8],c=0,b=0,ap=6    ap=6,read only, tex=1,normal(no cache)
         MOV    r2,#0x37                   //size 256M,enable
         MCR    p15,0,r0,c6,c2,0           // Set region number
@@ -166,7 +166,7 @@ ResetHandler:
 //init mpu region 1,Device 1G          0x10000000~0x50000000 （R0）
         MOV    r0, #12                    //region 12 
         MOV    r3, #0x10000000            //base addr from 0
-        MOV    r1,#0x310                  //normal,tex[5：3] 001 ,c=0,b=0,ap=3
+        MOV    r1,#0x301                  //normal,tex[5：3] 001 ,c=0,b=0,ap=3
         MOV    r2,#0x3B                   //size 1G,enable
         MCR    p15,0,r0,c6,c2,0           // Set region number
         MCR    p15,0,r3,c6,c1,0           // Region base address         
@@ -234,7 +234,6 @@ ResetHandler:
 //        MCR    p15,0,r1,c6,c1,4           // Region access control        
 //        MCR    p15,0,r2,c6,c1,2           // Region size and enable
 #endif
-
 #if __ARM_FP  //def __ARM_FP
 //----------------------------------------------------------------
 // Enable access to VFP by enabling access to Coprocessors 10 and 11.

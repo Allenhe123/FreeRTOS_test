@@ -750,6 +750,9 @@
         TickType_t xNextExpireTime;
         BaseType_t xListWasEmpty;
 
+        int* p = 0xB7000000;
+        *p = 0x7799;
+
         /* Just to avoid compiler warnings. */
         ( void ) pvParameters;
 
@@ -765,17 +768,20 @@
 
         for( ; configCONTROL_INFINITE_LOOP(); )
         {
+*p = 0x8000;
             /* Query the timers list to see if it contains any timers, and if so,
              * obtain the time at which the next timer will expire. */
             xNextExpireTime = prvGetNextExpireTime( &xListWasEmpty );
-
+ *p = 0x8001;
             /* If a timer has expired, process it.  Otherwise, block this task
              * until either a timer does expire, or a command is received. */
             prvProcessTimerOrBlockTask( xNextExpireTime, xListWasEmpty );
-
+ *p = 0x8002;
             /* Empty the command queue. */
             prvProcessReceivedCommands();
+ *p = 0x8003;
         }
+ *p = 0x8004;
     }
 /*-----------------------------------------------------------*/
 

@@ -29,6 +29,7 @@
 
 .extern FreeRTOS_IRQ_Handler
 .extern FreeRTOS_SVC_Handler
+/*.extern FreeRTOS_SWI_Handler*/
 .extern AbortRarry
 
 .section .freertos_vectors, "a"
@@ -36,6 +37,7 @@ __vector_table:
 	LDR	pc,=ResetHandler
 	LDR	pc,=FreeRTOS_Undefined
 	LDR pc,=FreeRTOS_SVC_Handler
+	/*LDR pc,=FreeRTOS_SWI_Handler*/
 	LDR	pc,=FreeRTOS_PrefetchAbortHandler
 	LDR	pc,=FreeRTOS_DataAbortHandler
 	NOP	/* Placeholder for address exception vector*/

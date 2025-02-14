@@ -231,7 +231,7 @@ void * pvPortMalloc( size_t xWantedSize )
             prvHeapInit();
         }
         else
-        {
+        { 
             mtCOVERAGE_TEST_MARKER();
         }
 

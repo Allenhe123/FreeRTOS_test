@@ -1780,7 +1780,6 @@
             if( lIndex != -1 )
             {
                 xReturn = xTaskCreateRestricted( pxTaskDefinition, &( xInternalTaskHandle ) );
-
                 if( ( xReturn == pdPASS ) && ( xInternalTaskHandle != NULL ) )
                 {
                     MPU_StoreTaskHandleAtIndex( lIndex, xInternalTaskHandle );

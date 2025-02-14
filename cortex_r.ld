@@ -1,5 +1,5 @@
-_STACK_SIZE = 2*0x400;
-_HEAP_SIZE = 64 * 2*0x400;
+_STACK_SIZE = 16 * 2*0x400;
+_HEAP_SIZE = 32 * 2*0x400;
 
 _SYSTEM_STACK_SIZE = 16 * 2 * 1024;
 _ABORT_STACK_SIZE = 512;
@@ -19,14 +19,13 @@ _UNDEF_STACK_SIZE = DEFINED(_UNDEF_STACK_SIZE) ? _UNDEF_STACK_SIZE : 1024;
 
 MEMORY
 {
-  /*flash (rx)  : ORIGIN = 0x5100000, LENGTH = 256K - 2 */ /* -2 for CRC16 */
   TCM (rwx) : ORIGIN = 0x40, LENGTH = 0x7FC0        /*32K - 64bytes Bytes*/
   /*SRAM (rwx) : ORIGIN = 0x5140000, LENGTH = 192K */ /*448K Bytes*/
   SRAM (rwx) : ORIGIN = 0x5100000, LENGTH = 0x70000 /*448K Bytes*/
 }
 
 __privileged_functions_region_size__  = 64K;  /*64K*/
-__privileged_data_region_size__       = 32K;  /*64K*/
+__privileged_data_region_size__       = 64K;  /*64K*/
 
 __FLASH_segment_start__               = ORIGIN(SRAM);
 __FLASH_segment_end__                 = __FLASH_segment_start__ + 256K;
@@ -48,13 +47,10 @@ SECTIONS
     .privileged_functions :
     {
         . = ALIGN(4);
-        KEEP(*(.intvecs))
         KEEP (*(.freertos_vectors))
         KEEP (*(.vectors))
-        KEEP(*(.fw_infos_section))
-        KEEP(*(.isr_vector)) /* Startup code. */
         . = ALIGN(4);
-        *(privileged_functions)
+        KEEP(*(privileged_functions))
         . = ALIGN(4);
         /* Fill rest of the region with a known value */
         FILL(0xADDEADDE);
@@ -100,7 +96,7 @@ SECTIONS
         . = ALIGN(4);
         *(privileged_data)
         . = ALIGN(4);
-        _erelocate = .;
+        /*_erelocate = .;*/
         /* FILL(0xDEAD); */
         /* Ensure that un-privileged data is placed after the region reserved
          * for privileged kernel data. */

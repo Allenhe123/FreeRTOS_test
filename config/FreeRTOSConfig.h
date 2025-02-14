@@ -78,7 +78,7 @@
 #define configUSE_TICK_HOOK						0
 #define configMAX_PRIORITIES					( 7 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 2048 )
-#define configTOTAL_HEAP_SIZE					( 5 * 1024 )
+#define configTOTAL_HEAP_SIZE					( 40 * 1024 )
 #define configMAX_TASK_NAME_LEN					( 10 )
 #define configUSE_TRACE_FACILITY				0
 #define configUSE_16_BIT_TICKS					0
@@ -165,10 +165,10 @@ nothing to return to.  To avoid this define configTASK_RETURN_ADDRESS to 0.  */
  * that is suitable for use on the Zynq MPU.  FreeRTOS_Tick_Handler() must
  * be installed as the peripheral's interrupt handler.
  */
-// void vConfigureTickInterrupt( void );
+//  void vConfigureTickInterrupt( void );
 #define configSETUP_TICK_INTERRUPT() vConfigureTickInterrupt()
 
-// void vClearTickInterrupt( void );
+//  void vClearTickInterrupt( void );
 #define configCLEAR_TICK_INTERRUPT() vClearTickInterrupt()
 
 /* The following constant describe the hardware, and are correct for the
@@ -177,14 +177,14 @@ Zynq MPU. */
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( 0x1000 )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
 
-#define configENABLE_MPU                                       0U
+#define configENABLE_MPU                                       1U
 #define configENABLE_FPU                                       1U
 #define configUSE_MPU_WRAPPERS_V1                              0U
-#define configTOTAL_MPU_REGIONS 16
-#define configSYSTEM_CALL_STACK_SIZE 2048
-#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE 128
-#define INCLUDE_xTaskGetSchedulerState 1
-#define configUSE_EVENT_GROUPS 1
+#define configTOTAL_MPU_REGIONS                                12U
+#define configSYSTEM_CALL_STACK_SIZE                           2048U
+#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE                128U
+#define INCLUDE_xTaskGetSchedulerState                         1U
+#define configUSE_EVENT_GROUPS                                 1U
 
 #endif /* FREERTOS_CONFIG_H */
 
