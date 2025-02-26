@@ -1,9 +1,9 @@
-_STACK_SIZE = 16 * 2*0x400;
-_HEAP_SIZE = 32 * 2*0x400;
+_STACK_SIZE = 2*0x400;
+_HEAP_SIZE = 2*0x400;
 
-_SYSTEM_STACK_SIZE = 16 * 2 * 1024;
+_SYSTEM_STACK_SIZE = 2 * 1024;
 _ABORT_STACK_SIZE = 512;
-_SUPERVISOR_STACK_SIZE = 16 * 2 * 1024;
+_SUPERVISOR_STACK_SIZE = 2 * 1024;
 _IRQ_STACK_SIZE = 2 * 512;
 _FIQ_STACK_SIZE = 2 * 512;
 _UNDEF_STACK_SIZE = 512;
@@ -19,25 +19,42 @@ _UNDEF_STACK_SIZE = DEFINED(_UNDEF_STACK_SIZE) ? _UNDEF_STACK_SIZE : 1024;
 
 MEMORY
 {
-  TCM (rwx) : ORIGIN = 0x40, LENGTH = 0x7FC0        /*32K - 64bytes Bytes*/
-  /*SRAM (rwx) : ORIGIN = 0x5140000, LENGTH = 192K */ /*448K Bytes*/
-  SRAM (rwx) : ORIGIN = 0x5100000, LENGTH = 0x70000 /*448K Bytes*/
+  TCM (rwx)       : ORIGIN = 0x40, LENGTH = 0x7FC0        /*32K - 64bytes Bytes*/
+  FLASH (rx)      : ORIGIN = 0x5100000, LENGTH = 256K
+  SRAM (rwx)      : ORIGIN = 0x5140000, LENGTH = 192K
 }
 
-__privileged_functions_region_size__  = 64K;  /*64K*/
-__privileged_data_region_size__       = 64K;  /*64K*/
+__FLASH_segment_start__               = ORIGIN(FLASH);
+__FLASH_segment_end__                 = __FLASH_segment_start__ + LENGTH(FLASH);
 
-__FLASH_segment_start__               = ORIGIN(SRAM);
-__FLASH_segment_end__                 = __FLASH_segment_start__ + 256K;
+__SRAM_segment_start__                = ORIGIN(SRAM);
+__SRAM_segment_end__                  = __SRAM_segment_start__ + LENGTH(SRAM);
 
-__SRAM_segment_start__                = ORIGIN(SRAM) + 256K;
-__SRAM_segment_end__                  = __SRAM_segment_start__ + 192K;
-
+__privileged_functions_region_size__  = 64K;
 __privileged_functions_start__        = __FLASH_segment_start__;
 __privileged_functions_end__          = __FLASH_segment_start__ + __privileged_functions_region_size__;
 
+__privileged_data_region_size__       = 64K;
 __privileged_data_start__             = __SRAM_segment_start__;
 __privileged_data_end__               = __SRAM_segment_start__ + __privileged_data_region_size__;
+
+/* A section of memory at the start of "PRIVILEGED_DATA" for different operating mode stacks */
+__privileged_stacks_region_size__ = 2K;
+__privileged_stacks_start__       = ORIGIN( SRAM );
+__privileged_stacks_end__         = ORIGIN( SRAM ) + __privileged_stacks_region_size__;
+
+/* Memory block for various dev kit peripherals */
+__peripherals_start__   = 0x20000000;
+__peripherals_length__  = 1536M;
+__peripherals_end__     = __peripherals_start__ + __peripherals_length__;
+
+/* Seperate memory block for privileged system */
+/*__privileged_system_start__   = 0xFFF80000;*/
+/*__privileged_system_length__  = 512K;*/
+/*__privileged_system_end__     = __privileged_system_start__ + __privileged_system_length__;*/
+
+/* The first 2K of space in RAM is used for different processor mode stacks */
+__privileged_stack_region_size = 0x800;
 
 /* Specify the default entry point to the program */
 ENTRY(__vector_table)
@@ -49,8 +66,10 @@ SECTIONS
         . = ALIGN(4);
         KEEP (*(.freertos_vectors))
         KEEP (*(.vectors))
+
         . = ALIGN(4);
-        KEEP(*(privileged_functions))
+        *(privileged_functions)
+
         . = ALIGN(4);
         /* Fill rest of the region with a known value */
         FILL(0xADDEADDE);
@@ -60,7 +79,7 @@ SECTIONS
         * the current section (.privileged_functions in this case). As a result,
         * setting dot (.) to a value sets the size of the section. */
         . = __privileged_functions_region_size__;
-    } >SRAM
+    } >FLASH
 
     .freertos_system_calls :
     {
@@ -70,13 +89,15 @@ SECTIONS
         *(freertos_system_calls)
         __syscalls_flash_end__ = .;
         . = ALIGN(4);
-    } >SRAM
+    } >FLASH
+
+      /* This variable is used in portASM.S to determine if a FreeRTOS System Call
+        * was raised from this specific section of flash */
+    __syscalls_flash_length__ = __syscalls_flash_end__ - __syscalls_flash_start__;
 
     .text :
     {
-        . = ALIGN(4);
         *(.boot)
-        . = ALIGN(4);
         *(.text)
         *(.text.*)
         *(.gnu.linkonce.t.*)
@@ -88,23 +109,12 @@ SECTIONS
         *(.vfp11_veneer)
         *(.ARM.extab)
         *(.gnu.linkonce.armextab.*)
-    } > SRAM
-
-    /* FreeRTOS kernel data. */
-    .privileged_data :
-    {
+        *(.eh_frame)
+        KEEP (*(.init))
+        KEEP (*(.fini))
         . = ALIGN(4);
-        *(privileged_data)
-        . = ALIGN(4);
-        /*_erelocate = .;*/
-        /* FILL(0xDEAD); */
-        /* Ensure that un-privileged data is placed after the region reserved
-         * for privileged kernel data. */
-        /* Note that dot (.) actually refers to the byte offset from the start
-         * of the current section (.privileged_data in this case). As a result,
-         * setting dot (.) to a value sets the size of the section. */
-        . = __privileged_data_region_size__;
-    } > SRAM
+        _etext = .;        /* define a global symbols at end of code */
+    } > FLASH
 
     .mem_tcm(NOLOAD) : ALIGN(4)
     {
@@ -113,25 +123,15 @@ SECTIONS
         _tcm_end = .;
     } > TCM
 
-    .init :
-    {
-        KEEP (*(.init))
-    } > SRAM
-
-    .fini :
-    {
-        KEEP (*(.fini))
-    } > SRAM
-
     .interp :
     {
         KEEP (*(.interp))
-    } > SRAM
+    } > FLASH
 
     .note-ABI-tag :
     {
         KEEP (*(.note-ABI-tag))
-    } > SRAM
+    } > FLASH
 
     .ctors :
     {
@@ -143,7 +143,7 @@ SECTIONS
         KEEP (*(.ctors))
         __CTOR_END__ = .;
         ___CTORS_END___ = .;
-    } > SRAM
+    } > FLASH
 
     .dtors :
     {
@@ -155,34 +155,29 @@ SECTIONS
         KEEP (*(.dtors))
         __DTOR_END__ = .;
         ___DTORS_END___ = .;
-    } > SRAM
+    } > FLASH
 
     .fixup :
     {
         *(.fixup)
-    } > SRAM
-
-    .eh_frame :
-    {
-        *(.eh_frame)
-    } > SRAM
+    } > FLASH
 
     .eh_framehdr :
     {
         *(.eh_framehdr)
-    } > SRAM
+    } > FLASH
 
     .gcc_except_table :
     {
         *(.gcc_except_table)
-    } > SRAM
+    } > FLASH
 
     .rodata : ALIGN(4)
     {
         *(.rodata)
         *(.rodata.*)
         *(.gnu.linkonce.r.*)
-    } > SRAM
+    } > FLASH
 
     .rodata1 : ALIGN(4) {
         *(.rodata1)
@@ -191,7 +186,33 @@ SECTIONS
         _shell_command_start = .;
         KEEP (*(shellCommand))
         _shell_command_end = .;
-    } > SRAM
+    } > FLASH
+
+    .privileged_data :
+    {
+        /* Leave a block of memory for different Processor mode stacks.
+        * These are set in sys_core.S */
+        . = ALIGN(4);
+        /* Mark the start of the region for debugging purposes. */
+        __start_privileged_stack_region = .;
+        . = __privileged_stack_region_size;
+        . = ALIGN(4);
+        /* Mark the end of the region for debugging purposes. */
+        __end_privileged_stack_region = .;
+
+        __start_priv_data = .; /* Create a global symbol at privileged data start. */
+        *(privileged_data)
+        . = ALIGN(4);
+        __end_priv_data = .; /* Create a global symbol at privileged data end. */
+        FILL(0xADDE); /* Fill RAM with known value */
+        /* Ensure that non-privileged data is placed after the region reserved for
+        * privileged kernel data. */
+        /* Note that dot (.) actually refers to the byte offset from the start of
+        * the current section (.privileged_data in this case). As a result, setting
+        * dot (.) to a value sets the size of the section. */
+        . = __privileged_data_region_size__;
+        . = ALIGN(4);
+    } >SRAM
 
     .data : ALIGN(4)
     {
@@ -201,46 +222,46 @@ SECTIONS
         *(.jcr)
         *(.got)
         *(.got.plt)
-    } > SRAM
+    } >SRAM
 
     .got :
     {
         *(.got)
-    } > SRAM
+    } > FLASH
 
     .mmu_tbl (ALIGN(16384)) :
     {
         *(.mmu_tbl)
-    } > SRAM
+    } > FLASH
 
     .ARM.exidx :
     {
         *(.ARM.exidx*)
         *(.gnu.linkonce.armexidix.*.*)
-    } > SRAM
+    } > FLASH
 
     .preinit_array :
     {
         KEEP (*(SORT(.preinit_array.*)))
         KEEP (*(.preinit_array))
-    } > SRAM
+    } > FLASH
 
     .init_array :
     {
         KEEP (*(SORT(.init_array.*)))
         KEEP (*(.init_array))
-    } > SRAM
+    } > FLASH
 
     .fini_array :
     {
         KEEP (*(SORT(.fini_array.*)))
         KEEP (*(.fini_array))
-    } > SRAM
+    } > FLASH
 
     .ARM.attributes :
     {
         *(.ARM.attributes)
-    } > SRAM
+    } > FLASH
 
     .sbss (NOLOAD) : ALIGN(4)
     {
